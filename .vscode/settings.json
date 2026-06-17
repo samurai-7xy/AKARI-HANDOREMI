@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "/Users/k24122kk/.pyenv/versions/3.13.7/lib/python3.13/site-packages"
+    ],
+}
