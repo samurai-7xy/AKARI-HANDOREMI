@@ -1,1 +1,2 @@
 akari_client
+depthai

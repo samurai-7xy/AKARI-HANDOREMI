@@ -1,2 +1,2 @@
 # AKARI-HANDOREMI
-aaaaaa
+akariのカメラのversion2.30.0

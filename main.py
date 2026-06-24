@@ -1,36 +1,45 @@
-from lib.akari_yolo_lib.oakd_yolo import OakdYolo
-from akari_client import AkariClient
-from akari_client.color import Colors
-from akari_client.position import Positions
-import time #あとで消してもいい
 import cv2
 import depthai as dai
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display, Image
+import threading
 
 def main():
     #Ubuntu側には depthai と opencv-python が必要
     # qを押すまでカメラの起動(モデル不要)
+
+    # OAK-Dのパイプライン作成
     pipeline = dai.Pipeline()
 
-    cam = pipeline.create(dai.node.ColorCamera)
-    cam.setPreviewSize(640, 480)
+    # ソースとアウトプットの設定
+    cam_rgb = pipeline.createColorCamera()
 
-    xout = pipeline.create(dai.node.XLinkOut)
-    xout.setStreamName("rgb")
+    # preview size640x480に指定
+    cam_rgb.setPreviewSize(640, 480)
+    cam_rgb.setInterleaved(False)
 
-    cam.preview.link(xout.input)
+    # ストリーミング名設定
+    xout_rgb = pipeline.createXLinkOut()
+    xout_rgb.setStreamName("rgb")
+    cam_rgb.preview.link(xout_rgb.input)
+
+    display_handle=display(None, display_id=True)
 
     with dai.Device(pipeline) as device:
-        qRgb = device.getOutputQueue("rgb")
 
         while True:
-            frame = qRgb.get().getCvFrame()
+            video = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
+            frame = video.get().getCvFrame()
+
 
             cv2.imshow("Camera", frame)
 
-            if cv2.waitKey(1) == ord('q'):
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-    cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
+        pipeline.stop()
 
 
 """     # カメラの起動(モデルが必要)
@@ -59,3 +68,6 @@ def main():
     oakd_yolo.close()
     # OpenCVのウィンドウを閉じる
     cv2.destroyAllWindows() """
+
+if __name__ == "__main__":
+    main()
