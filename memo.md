@@ -38,3 +38,7 @@ ip a | grep inet
 ```
 uv sync
 ```
+### アクティブ
+```
+source .venv/bin/activate
+```

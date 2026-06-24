@@ -1,11 +1,23 @@
+from camera import Camera
 import cv2
-import depthai as dai
-import matplotlib.pyplot as plt
-import ipywidgets as widgets
-from IPython.display import display, Image
-import threading
+from sound import play_sound
 
-def main():
+cam = Camera()
+sound = play_sound()
+
+while True:
+
+    frame = cam.get_frame()
+
+    cv2.imshow("Camera", frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cam.close()
+cv2.destroyAllWindows()
+
+"""
     #Ubuntu側には depthai と opencv-python が必要
     # qを押すまでカメラの起動(モデル不要)
 
@@ -42,7 +54,7 @@ def main():
         pipeline.stop()
 
 
-"""     # カメラの起動(モデルが必要)
+    # カメラの起動(モデルが必要)
     oakd_yolo = OakdYolo(
         "json/best.json", 
         "model/best_openvino_2022.1_6shave.blob", # このファイルの中身が分からない(自分でyoloモデルを作るらなきゃ？)
@@ -68,6 +80,3 @@ def main():
     oakd_yolo.close()
     # OpenCVのウィンドウを閉じる
     cv2.destroyAllWindows() """
-
-if __name__ == "__main__":
-    main()
